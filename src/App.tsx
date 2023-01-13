@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { useSelector } from 'react-redux'
 import { RootState } from './reducers';
 import { useDispatch } from 'react-redux/es/exports';
+import axios from 'axios';
 
 function App() {
   const [todoValue, setTodoValue] = useState("")
@@ -12,6 +13,17 @@ function App() {
   const counter = useSelector((state: RootState) => state.counter)
 
   const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(fetchPosts())
+  }, [dispatch])
+
+  const fetchPosts: any = () => {
+    return async function fetchPostsThunk(dispatch: any, getState: any) {
+      const response = await axios.get("https://jsonplaceholder.typicode.com/posts")
+      dispatch({ type: "FETCH_POSTS", payload: response.data })
+    }
+  }
 
   const addTodo = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
